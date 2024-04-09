@@ -1,22 +1,20 @@
 import os
 from dotenv import load_dotenv
-import asyncpg
-from async_lru import alru_cache
+import pg8000.native
 
 
-load_dotenv()
+load_dotenv(override=True)
 
 
-@alru_cache()
-async def connect_to_db():
-    return await asyncpg.connect(
-        user=os.getenv("PG_USER"),
+def connect_to_db():
+    return pg8000.native.Connection(
+        user=os.getenv("PG_USER"), 
         password=os.getenv("PG_PASSWORD"),
         database=os.getenv("PG_DATABASE"),
         host=os.getenv("PG_HOST"),
-        port=int(os.getenv("PG_PORT")),
+        port=int(os.getenv("PG_PORT"))
     )
 
 
-async def close_db_connection(conn):
-    await conn.close()
+def close_db_connection(conn):
+    conn.close()
