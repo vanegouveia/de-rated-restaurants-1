@@ -1,8 +1,5 @@
 from connection import connect_to_db, close_db_connection
-from dotenv import load_dotenv
 import json
-
-load_dotenv()
 
 
 def seed():
@@ -39,7 +36,7 @@ def seed():
                 restaurant_id INT,\
                 FOREIGN KEY (restaurant_id) REFERENCES restaurants(restaurant_id) ON DELETE CASCADE,\
                 rating INT CHECK (rating >= 1 AND rating <= 5)\
-            );"  # noqa
+            );"
         )
 
         areas_path = "db/data/areas.json"
@@ -62,14 +59,14 @@ def seed():
             rest_area_id = conn.run(
                 "SELECT area_id FROM areas WHERE area_name = :area_name",
                 area_name=row['area_name']
-            )  # noqa
+            )
             conn.run(
                 "INSERT INTO restaurants \
                     (restaurant_name, area_id, cuisine, website) \
                 VALUES \
-                    (:restaurant_name, :area_id, :cuisine, :website);",  # noqa
+                    (:restaurant_name, :area_id, :cuisine, :website);",
                 restaurant_name=row["restaurant_name"],
-                area_id=rest_area_id[0][0],  # noqa
+                area_id=rest_area_id[0][0],
                 cuisine=row["cuisine"],
                 website=row["website"],
             )
@@ -83,7 +80,7 @@ def seed():
             rest_name_id = conn.run(
                 "SELECT restaurant_id FROM restaurants WHERE restaurant_name = :restaurant_name",
                 restaurant_name=row['restaurant_name']    
-            )  # noqa
+            )
             conn.run(
                 "INSERT INTO ratings (restaurant_id, rating) VALUES (:restaurant_id, :rating)",
                 restaurant_id=rest_name_id[0][0],
@@ -94,5 +91,5 @@ def seed():
         print("Seeding Complete.")
         close_db_connection(conn)
 
-# asyncio.run(seed())
+
 seed()
